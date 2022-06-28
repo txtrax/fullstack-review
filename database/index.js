@@ -7,9 +7,9 @@ let repoSchema = mongoose.Schema({
   user_id: Number,
   user_name: String,
   github_url: String,
-  createdAt: String,
-  watched: Number,
-  stars: Number
+  created_at: String,
+  watchers: Number,
+  stargazers: Number
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
@@ -17,7 +17,6 @@ let Repo = mongoose.model('Repo', repoSchema);
 let save = (repo) => {
   // This function should save a repo or repos to
   // the MongoDB
-  console.log(repo)
   //repackage raw repo object
   let newRepo = new Repo({
     repo_id: repo.id,
@@ -30,7 +29,8 @@ let save = (repo) => {
     stargazers: repo.stargazers_count
   });
 
-  //save and catch errors, this works
+  // save and catch errors, this works
+  // come back and refactor schema to not make duplicates
   // newRepo.save()
   //   .catch(err => {
   //     console.log('error saving repos in database');
@@ -41,6 +41,11 @@ let read = () => {
   // This function should retrieve repos if given a query
   // otherwise retrieve all repos
   // return results sorted
+
+  //the limit method works
+  return Repo.find()
+    .sort({watchers: -1})
+    .limit(25)
 
 }
 

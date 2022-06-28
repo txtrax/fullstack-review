@@ -5,14 +5,16 @@ const express = require('express');
 let app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
-// app.use(express.json());
+app.use(express.urlencoded({extended: false})); //params
+app.use(express.json()); //body
 
 app.post('/repos', function (req, res) {
   // TODO - your code here!
   // This route should take the github username provided
   // and get the repo information from the github API, then
   // save the repo information in the database
-  let user = req.query.user;
+  let user = req.body.user;
+
   github.getReposByUsername(user)
     .then(results => {
       results.data.forEach(repo => {
@@ -20,12 +22,10 @@ app.post('/repos', function (req, res) {
       })
     })
     .then(results => {
-      console.log('created :)')
-      res.sendStatus(201);
+      res.send(201);
     })
     .catch(err => {
-      console.log('error retrieving repos :(');
-      res.end();
+      res.send(500);
     })
 });
 
@@ -34,12 +34,11 @@ app.get('/repos', function (req, res) {
   // This route should send back the top 25 repos
   db.read()
     .then(results => {
-      res.send(result)
+      res.send(results)
     })
     .catch(err => {
       res.send(500)
     })
-
 });
 
 let port = process.env.PORT || 1128;
