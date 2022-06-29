@@ -11,10 +11,15 @@ class App extends React.Component {
     this.state = {
       repos: []
     }
-
+    this.onSearch = this.onSearch.bind(this);
+    this.getRepos = this.getRepos.bind(this);
   }
 
   componentDidMount() {
+    this.getRepos();
+  }
+
+  getRepos() {
     axios.get('/repos')
       .then(results => {
         this.setState({repos: results.data});
@@ -25,7 +30,6 @@ class App extends React.Component {
   }
 
   onSearch(term) {
-    // console.log(`${term} was searched`);
     axios({
       method: 'POST',
       url: '/repos',
@@ -33,13 +37,7 @@ class App extends React.Component {
         user: term
     }})
       .then(results => {
-        axios.get('/repos')
-          .then(results => {
-            this.setState({repos: results.data});
-          })
-          .catch(err => {
-            console.log('try again');
-          })
+        this.getRepos();
       })
       .catch(err => {
         console.log('error in client post');
@@ -50,7 +48,7 @@ class App extends React.Component {
     return (
     <div>
       <h1>Github Fetcher</h1>
-      <Search onSearch={this.onSearch.bind(this)}/>
+      <Search onSearch={this.onSearch}/>
       <RepoList repos={this.state.repos}/>
     </div>)
   }

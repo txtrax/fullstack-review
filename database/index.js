@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/fetcher');
 
 let repoSchema = mongoose.Schema({
-  repo_id: Number,
+  repo_id: {type: Number, unique: true, required: true},
   repo_name: String,
   user_id: Number,
   user_name: String,
@@ -31,10 +31,10 @@ let save = (repo) => {
 
   // save and catch errors, this works
   // come back and refactor schema to not make duplicates
-  // newRepo.save()
-  //   .catch(err => {
-  //     console.log('error saving repos in database');
-  //   })
+  newRepo.save()
+    .catch(err => {
+      console.log('error saving repos in database');
+    })
 }
 
 let read = () => {
@@ -46,7 +46,6 @@ let read = () => {
   return Repo.find()
     .sort({watchers: -1})
     .limit(25)
-
 }
 
 module.exports.save = save;
